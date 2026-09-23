@@ -1,6 +1,5 @@
 #include <iostream>
-#include <cstring>
-#include "lz78.h"
+#include "XOR.H"
 
 using namespace std;
 
@@ -8,37 +7,58 @@ int main()
 {
     try
     {
-        char texto[100];
+        int dato;
+        int n;
+        int clave;
 
-        cout << "Ingrese el texto: ";
-        cin.getline(texto, 100);
+        cout << "Ingrese un dato entre 0 y 255: ";
+        cin >> dato;
 
-        Entrada* diccionario = new Entrada[100];
+        cout << "Ingrese la cantidad de posiciones a rotar (1-7): ";
+        cin >> n;
 
-        int cantidad = 0;
+        cout << "Ingrese la clave entre 1 y 255: ";
+        cin >> clave;
 
-        cout << "\nPares generados:\n";
+        if (dato < 0 || dato > 255)
+            throw out_of_range("El dato debe estar entre 0 y 255");
 
-        comprimir(texto, diccionario, cantidad);
+        if (n <= 0 || n >= 8)
+            throw invalid_argument("La rotacion debe estar entre 1 y 7");
 
-        char* resultado = new char[100];
+        if (clave < 1 || clave > 255)
+            throw runtime_error("La clave debe estar entre 1 y 255");
 
-        descomprimir(diccionario, cantidad, resultado);
+        unsigned char original = dato;
+        unsigned char llave = clave;
 
-        cout << "\nOriginal: " << texto << endl;
-        cout << "Descomprimido: " << resultado << endl;
+        unsigned char cifrado =
+            encriptar(original, n, llave);
 
-        if (strcmp(texto, resultado) == 0)
+        unsigned char recuperado =
+            desencriptar(cifrado, n, llave);
+
+        cout << endl;
+
+        cout << "Original: "
+             << (int)original << endl;
+
+        cout << "Encriptado: "
+             << (int)cifrado << endl;
+
+        cout << "Desencriptado: "
+             << (int)recuperado << endl;
+
+        if (original == recuperado)
         {
-            cout << "La descompresion es correcta." << endl;
+            cout << "La desencriptacion es correcta."
+                 << endl;
         }
         else
         {
-            throw runtime_error("Los textos no coinciden");
+            throw runtime_error(
+                "El dato original y el recuperado no coinciden");
         }
-
-        delete[] diccionario;
-        delete[] resultado;
     }
     catch (invalid_argument& e)
     {

@@ -6,8 +6,10 @@ CONFIG -= qt
 SOURCES += \
         LZ78.cpp \
         RLE.cpp \
+        XOR.cpp \
         main.cpp
 
 HEADERS += \
     LZ78.h \
-    RLE.h
+    RLE.h \
+    XOR.h

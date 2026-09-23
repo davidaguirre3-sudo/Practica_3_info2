@@ -55,8 +55,6 @@ void comprimir(char texto[], Entrada diccionario[], int& cantidad)
         }
     }
 
-    // Si queda una frase completa al final,
-    // se agrega usando su ultimo caracter.
     if (prefijo != 0)
     {
         if (cantidad >= 100)
