@@ -1,15 +1,19 @@
 #ifndef LZ78_H
 #define LZ78_H
 
-struct Entrada{
-
+struct Entrada
+{
     int prefijo;
     char caracter;
 };
 
-void comprimir(char texto[], Entrada diccionario[], int& cantidad);
+int buscar(Entrada* diccionario, int cantidad,
+           int prefijo, char caracter);
 
-void descomprimir(Entrada diccionario[], int cantidad, char resultado[]);
+Entrada* comprimir(char texto[], int& cantidad);
+
+void descomprimir(Entrada* diccionario, int cantidad,
+                  char resultado[]);
 
 #endif
 

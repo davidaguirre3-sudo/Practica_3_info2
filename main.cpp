@@ -1,5 +1,5 @@
 #include <iostream>
-#include "XOR.H"
+#include "lz78.h"
 
 using namespace std;
 
@@ -7,58 +7,54 @@ int main()
 {
     try
     {
-        int dato;
-        int n;
-        int clave;
+        char texto[100];
 
-        cout << "Ingrese un dato entre 0 y 255: ";
-        cin >> dato;
+        cout << "Ingrese el texto: ";
+        cin.getline(texto, 100);
 
-        cout << "Ingrese la cantidad de posiciones a rotar (1-7): ";
-        cin >> n;
+        int cantidad = 0;
 
-        cout << "Ingrese la clave entre 1 y 255: ";
-        cin >> clave;
+        Entrada* diccionario = comprimir(texto, cantidad);
 
-        if (dato < 0 || dato > 255)
-            throw out_of_range("El dato debe estar entre 0 y 255");
+        char resultado[500];
 
-        if (n <= 0 || n >= 8)
-            throw invalid_argument("La rotacion debe estar entre 1 y 7");
-
-        if (clave < 1 || clave > 255)
-            throw runtime_error("La clave debe estar entre 1 y 255");
-
-        unsigned char original = dato;
-        unsigned char llave = clave;
-
-        unsigned char cifrado =
-            encriptar(original, n, llave);
-
-        unsigned char recuperado =
-            desencriptar(cifrado, n, llave);
+        descomprimir(
+            diccionario,
+            cantidad,
+            resultado
+            );
 
         cout << endl;
 
-        cout << "Original: "
-             << (int)original << endl;
+        cout << "Original: "<< texto << endl;
 
-        cout << "Encriptado: "
-             << (int)cifrado << endl;
+        cout << "Descomprimido: " << resultado << endl;
 
-        cout << "Desencriptado: "
-             << (int)recuperado << endl;
+        int i = 0;
 
-        if (original == recuperado)
+        while (texto[i] != '\0' &&
+               resultado[i] != '\0')
         {
-            cout << "La desencriptacion es correcta."
-                 << endl;
+            if (texto[i] != resultado[i])
+            {
+                throw runtime_error(
+                    "El texto descomprimido no coincide"
+                    );
+            }
+          i++;
         }
-        else
+
+        if (texto[i] != '\0' ||
+            resultado[i] != '\0')
         {
             throw runtime_error(
-                "El dato original y el recuperado no coinciden");
+                "El texto descomprimido no coincide"
+                );
         }
+
+        cout << "La descompresion es correcta."<< endl;
+
+        delete[] diccionario;
     }
     catch (invalid_argument& e)
     {
@@ -66,7 +62,7 @@ int main()
     }
     catch (out_of_range& e)
     {
-        cout << "Error: " << e.what() << endl;
+        cout << "Error: "<< e.what() << endl;
     }
     catch (runtime_error& e)
     {
