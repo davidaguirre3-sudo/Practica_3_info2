@@ -4,12 +4,12 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
+        ENCRIPTACION.cpp \
         LZ78.cpp \
         RLE.cpp \
-        XOR.cpp \
         main.cpp
 
 HEADERS += \
+    ENCRIPTACION.h \
     LZ78.h \
-    RLE.h \
-    XOR.h
+    RLE.h

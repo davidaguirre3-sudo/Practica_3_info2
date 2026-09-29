@@ -9,8 +9,7 @@ int buscar(Entrada* diccionario, int cantidad,
 {
     for (int i = 0; i < cantidad; i++)
     {
-        if (diccionario[i].prefijo == prefijo &&
-            diccionario[i].caracter == caracter)
+        if (diccionario[i].prefijo == prefijo && diccionario[i].caracter == caracter)
         {
             return i + 1;
         }
@@ -134,7 +133,6 @@ void descomprimir(Entrada* diccionario, int cantidad,
     resultado[posicionResultado] = '\0';
 
     if (posicionResultado == 0)
-        throw runtime_error(
-            "No se pudo descomprimir"
-            );
+        throw runtime_error( "No se pudo descomprimir");
 }
+
