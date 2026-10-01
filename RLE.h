@@ -5,7 +5,7 @@
 
 using namespace std;
 
-string comprimir(string texto);
-string descomprimir(string comprimido);
+char* comprimirRLE(const char* texto, int cantidad, int& cantidadComprimida);
+char* descomprimirRLE(const char* texto, int cantidad, int& cantidadDescomprimida);
 
 #endif // RLE_H

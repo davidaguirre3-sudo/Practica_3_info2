@@ -6,6 +6,7 @@ CONFIG -= qt
 SOURCES += \
         ARCHIVOS.cpp \
         ENCRIPTACION.cpp \
+        INTEGRACION.cpp \
         LZ78.cpp \
         RLE.cpp \
         main.cpp
@@ -13,5 +14,6 @@ SOURCES += \
 HEADERS += \
     ARCHIVOS.h \
     ENCRIPTACION.h \
+    INTEGRACION.h \
     LZ78.h \
     RLE.h

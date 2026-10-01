@@ -1,5 +1,6 @@
 #include "lz78.h"
 #include <stdexcept>
+#include <climits>
 #include <iostream>
 
 using namespace std;
@@ -9,7 +10,8 @@ int buscar(Entrada* diccionario, int cantidad,
 {
     for (int i = 0; i < cantidad; i++)
     {
-        if (diccionario[i].prefijo == prefijo && diccionario[i].caracter == caracter)
+        if (diccionario[i].prefijo == prefijo &&
+            diccionario[i].caracter == caracter)
         {
             return i + 1;
         }
@@ -18,16 +20,13 @@ int buscar(Entrada* diccionario, int cantidad,
     return 0;
 }
 
-
-Entrada* agregar(Entrada* diccionario, int& cantidad,
-                 int prefijo, char caracter)
+Entrada* agregarEntrada(Entrada* diccionario, int& cantidad,
+                        int prefijo, char caracter)
 {
     Entrada* nuevo = new Entrada[cantidad + 1];
 
     for (int i = 0; i < cantidad; i++)
-    {
         nuevo[i] = diccionario[i];
-    }
 
     nuevo[cantidad].prefijo = prefijo;
     nuevo[cantidad].caracter = caracter;
@@ -35,104 +34,202 @@ Entrada* agregar(Entrada* diccionario, int& cantidad,
     delete[] diccionario;
 
     cantidad++;
-
     return nuevo;
 }
 
-
-Entrada* comprimir(char texto[], int& cantidad)
+Entrada* comprimirLZ78(const char* texto, int cantidadTexto,
+                       int& cantidadPares)
 {
     if (texto == nullptr)
-        throw invalid_argument("El texto no puede ser nulo");
+        throw invalid_argument("El texto es nulo");
 
-    if (texto[0] == '\0')
+    if (cantidadTexto <= 0)
         throw invalid_argument("El texto esta vacio");
 
-    cantidad = 0;
-
+    cantidadPares = 0;
     Entrada* diccionario = nullptr;
 
-    int i = 0;
+    int posicion = 0;
     int prefijo = 0;
 
-    while (texto[i] != '\0')
+    while (posicion < cantidadTexto)
     {
-        int posicion = buscar(
-            diccionario,cantidad, prefijo, texto[i]);
+        int indice = buscar(diccionario, cantidadPares,
+                            prefijo, texto[posicion]);
 
-        if (posicion != 0)
+        if (indice != 0)
         {
-            prefijo = posicion;
-            i++;
+            prefijo = indice;
+            posicion++;
         }
         else
         {
-            diccionario = agregar(
-                diccionario,cantidad, prefijo,texto[i]
-                );
+            diccionario = agregarEntrada(diccionario,
+                                         cantidadPares,
+                                         prefijo,
+                                         texto[posicion]);
 
-            cout << "(" << prefijo<< ", " << texto[i] << ")"<< endl;
+            cout << "(" << prefijo << ", "
+                 << texto[posicion] << ")" << endl;
 
             prefijo = 0;
-            i++;
+            posicion++;
         }
+    }
+    if (prefijo != 0)
+    {
+        diccionario = agregarEntrada(diccionario,
+                                     cantidadPares,
+                                     prefijo,
+                                     '\0');
+
+        cout << "(" << prefijo << ", FIN)" << endl;
     }
 
     return diccionario;
 }
 
 
-void descomprimir(Entrada* diccionario, int cantidad,
-                  char resultado[])
+void descomprimirLZ78(Entrada* pares, int cantidadPares,
+                      char resultado[], int capacidadResultado,
+                      int& cantidadResultado)
 {
-    if (diccionario == nullptr)
-        throw invalid_argument("El diccionario es nulo");
+    if (pares == nullptr || resultado == nullptr)
+        throw invalid_argument("Datos de LZ78 nulos");
 
-    if (cantidad <= 0)
-        throw out_of_range("El diccionario esta vacio");
+    if (cantidadPares <= 0)
+        throw invalid_argument("No hay pares para descomprimir");
 
-    int posicionResultado = 0;
+    if (capacidadResultado <= 0)
+        throw out_of_range("Capacidad del resultado invalida");
 
-    for (int i = 0; i < cantidad; i++)
+    char* temporal = new char[cantidadPares + 1];
+    cantidadResultado = 0;
+
+    for (int i = 0; i < cantidadPares; i++)
     {
-        int indice = i + 1;
+        int indice;
 
-        char temporal[100];
+        if (pares[i].caracter == '\0')
+            indice = pares[i].prefijo;
+        else
+            indice = i + 1;
+
         int cantidadTemporal = 0;
 
         while (indice != 0)
         {
-            if (indice < 1 || indice > cantidad)
-                throw out_of_range("Indice incorrecto");
+            if (indice < 1 || indice > i + 1)
+            {
+                delete[] temporal;
+                throw out_of_range("Indice de LZ78 incorrecto");
+            }
 
             temporal[cantidadTemporal] =
-                diccionario[indice - 1].caracter;
+                pares[indice - 1].caracter;
 
             cantidadTemporal++;
+            indice = pares[indice - 1].prefijo;
 
-            indice =
-                diccionario[indice - 1].prefijo;
-
-            if (cantidadTemporal >= 100)
-                throw runtime_error(
-                    "Frase demasiado larga"
-                    );
+            if (cantidadTemporal > cantidadPares)
+            {
+                delete[] temporal;
+                throw runtime_error("Cadena LZ78 demasiado larga");
+            }
         }
 
-        for (int j = cantidadTemporal - 1;
-             j >= 0;
-             j--)
+        for (int j = cantidadTemporal - 1; j >= 0; j--)
         {
-            resultado[posicionResultado] =
-                temporal[j];
+            if (cantidadResultado >= capacidadResultado - 1)
+            {
+                delete[] temporal;
+                throw out_of_range("El resultado no cabe en memoria");
+            }
 
-            posicionResultado++;
+            resultado[cantidadResultado] = temporal[j];
+            cantidadResultado++;
         }
     }
 
-    resultado[posicionResultado] = '\0';
+    resultado[cantidadResultado] = '\0';
+    delete[] temporal;
 
-    if (posicionResultado == 0)
-        throw runtime_error( "No se pudo descomprimir");
+    if (cantidadResultado == 0)
+        throw runtime_error("No se pudo reconstruir el texto");
 }
 
+unsigned char* serializar(Entrada* pares, int cantidad,
+                              int& cantidadBytes)
+{
+    if (pares == nullptr)
+        throw invalid_argument("Los pares son nulos");
+
+    if (cantidad <= 0)
+        throw invalid_argument("No hay pares para serializar");
+
+    if (cantidad > INT_MAX / 5)
+        throw out_of_range("Demasiados pares para serializar");
+
+    cantidadBytes = cantidad * 5;
+    unsigned char* datos = new unsigned char[cantidadBytes];
+
+    int posicion = 0;
+
+    for (int i = 0; i < cantidad; i++)
+    {
+        if (pares[i].prefijo < 0)
+        {
+            delete[] datos;
+            throw out_of_range("Prefijo negativo");
+        }
+
+        unsigned int prefijo = (unsigned int)pares[i].prefijo;
+
+        datos[posicion++] = (unsigned char)((prefijo >> 24) & 255);
+        datos[posicion++] = (unsigned char)((prefijo >> 16) & 255);
+        datos[posicion++] = (unsigned char)((prefijo >> 8) & 255);
+        datos[posicion++] = (unsigned char)(prefijo & 255);
+        datos[posicion++] = (unsigned char)pares[i].caracter;
+    }
+
+    return datos;
+}
+
+Entrada* deserializar(const unsigned char* datos, int cantidadBytes,
+                          int& cantidadPares)
+{
+    if (datos == nullptr)
+        throw invalid_argument("Los datos son nulos");
+
+    if (cantidadBytes <= 0)
+        throw invalid_argument("No hay datos para deserializar");
+
+    if (cantidadBytes % 5 != 0)
+        throw runtime_error("Los datos LZ78 estan incompletos");
+
+    cantidadPares = cantidadBytes / 5;
+    Entrada* pares = new Entrada[cantidadPares];
+
+    int posicion = 0;
+
+    for (int i = 0; i < cantidadPares; i++)
+    {
+        unsigned int prefijo = 0;
+
+        prefijo = (prefijo << 8) | datos[posicion++];
+        prefijo = (prefijo << 8) | datos[posicion++];
+        prefijo = (prefijo << 8) | datos[posicion++];
+        prefijo = (prefijo << 8) | datos[posicion++];
+
+        if (prefijo > (unsigned int)INT_MAX)
+        {
+            delete[] pares;
+            throw out_of_range("Prefijo fuera del rango de int");
+        }
+
+        pares[i].prefijo = (int)prefijo;
+        pares[i].caracter = (char)datos[posicion++];
+    }
+
+    return pares;
+}

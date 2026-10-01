@@ -7,13 +7,24 @@ struct Entrada
     char caracter;
 };
 
+
 int buscar(Entrada* diccionario, int cantidad,
            int prefijo, char caracter);
 
-Entrada* comprimir(char texto[], int& cantidad);
+Entrada* agregarEntrada(Entrada* diccionario, int& cantidad,
+                        int prefijo, char caracter);
 
-void descomprimir(Entrada* diccionario, int cantidad,
-                  char resultado[]);
+Entrada* comprimir(const char* texto, int cantidadTexto,
+                       int& cantidadPares);
+
+unsigned char* serializar(Entrada* pares, int cantidad,
+                              int& cantidadBytes);
+
+Entrada* deserializar(const unsigned char* datos, int cantidadBytes,
+                          int& cantidadPares);
+
+void descomprimir(Entrada* pares, int cantidadPares, char resultado[], int capacidadResultado,
+                      int& cantidadResultado);
 
 #endif
 
