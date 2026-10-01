@@ -37,7 +37,7 @@ Entrada* agregarEntrada(Entrada* diccionario, int& cantidad,
     return nuevo;
 }
 
-Entrada* comprimirLZ78(const char* texto, int cantidadTexto,
+Entrada* comprimir(const char* texto, int cantidadTexto,
                        int& cantidadPares)
 {
     if (texto == nullptr)
@@ -90,7 +90,7 @@ Entrada* comprimirLZ78(const char* texto, int cantidadTexto,
 }
 
 
-void descomprimirLZ78(Entrada* pares, int cantidadPares,
+void descomprimir(Entrada* pares, int cantidadPares,
                       char resultado[], int capacidadResultado,
                       int& cantidadResultado)
 {

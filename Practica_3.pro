@@ -17,3 +17,8 @@ HEADERS += \
     INTEGRACION.h \
     LZ78.h \
     RLE.h
+
+DISTFILES += \
+    entrada1 \
+    entrada2 \
+    salida1

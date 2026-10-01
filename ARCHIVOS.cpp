@@ -1,6 +1,7 @@
 #include "archivos.h"
 #include <fstream>
 #include <stdexcept>
+#include <iostream>
 
 using namespace std;
 
@@ -61,10 +62,14 @@ void escribirArchivo(const char* nombre, const char* texto, int cantidad)
 
     ofstream archivo(nombre, ios::binary);
 
+    cout << "Guardando archivo en: " << nombre << endl;
+
     if (!archivo)
         throw runtime_error("No se pudo abrir el archivo de salida");
 
     archivo.write(texto, cantidad);
+
+    cout << "Cantidad escrita: " << cantidad << endl;
 
     if (!archivo)
     {

@@ -14,8 +14,7 @@ int buscar(Entrada* diccionario, int cantidad,
 Entrada* agregarEntrada(Entrada* diccionario, int& cantidad,
                         int prefijo, char caracter);
 
-Entrada* comprimir(const char* texto, int cantidadTexto,
-                       int& cantidadPares);
+Entrada* comprimir(const char* texto, int cantidadTexto, int& cantidadPares);
 
 unsigned char* serializar(Entrada* pares, int cantidad,
                               int& cantidadBytes);
@@ -23,8 +22,7 @@ unsigned char* serializar(Entrada* pares, int cantidad,
 Entrada* deserializar(const unsigned char* datos, int cantidadBytes,
                           int& cantidadPares);
 
-void descomprimir(Entrada* pares, int cantidadPares, char resultado[], int capacidadResultado,
-                      int& cantidadResultado);
+void descomprimir(Entrada* pares, int cantidadPares, char resultado[], int capacidadResultado, int& cantidadResultado);
 
 #endif
 

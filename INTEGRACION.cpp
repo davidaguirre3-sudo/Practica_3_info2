@@ -44,9 +44,10 @@ void integrarRLE(const char* archivoEntrada,
 
 
         int cantidadComprimida = 0;
-        comprimido = comprimirRLE(original,
-                                  cantidadOriginal,
-                                  cantidadComprimida);
+        comprimido = comprimirRLE(original, cantidadOriginal, cantidadComprimida);
+
+        if (cantidadComprimida < 0)
+            throw runtime_error("cantidadComprimida invalida");
 
         cout << "\nTexto comprimido con RLE:\n";
         cout.write(comprimido, cantidadComprimida);
@@ -68,6 +69,7 @@ void integrarRLE(const char* archivoEntrada,
         desencriptado[cantidadComprimida] = '\0';
 
         delete[] datos;
+        datos = nullptr;
 
         int cantidadResultado = 0;
         resultado = descomprimirRLE(desencriptado, cantidadComprimida,cantidadResultado);
@@ -102,7 +104,6 @@ void integrarRLE(const char* archivoEntrada,
         delete[] desencriptado;
         delete[] resultado;
         delete[] resultadoArchivo;
-        delete[] datos;
     }
     catch (...)
     {
